@@ -48,9 +48,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect( ui->lineEdit, SIGNAL(returnPressed()), this, SLOT(onReturnPressed()) );
     connect( this, SIGNAL(letterFind(QString)), this, SLOT(onTextChanged(QString)) );
 
-    int a = 1;
-    int b = 2;
-    qDebug() << "a+b=" << a + b << endl;
+    qDebug() << "whpwhpwhp" << endl;
 }
 
 
