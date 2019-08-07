@@ -47,6 +47,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect( ui->lineEdit, SIGNAL(returnPressed()), this, SLOT(onReturnPressed()) );
     connect( this, SIGNAL(letterFind(QString)), this, SLOT(onTextChanged(QString)) );
+
+    qDebug() <<"whp modify" << endl;
 }
 
 
