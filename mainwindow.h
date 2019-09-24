@@ -31,6 +31,7 @@ signals:
 private slots:
  void onTextChanged(const QString &text);
  void onReturnPressed();
+ void record_sortbyclounm(int col);
 
 private:
  QString firstPinyin(QString &text);

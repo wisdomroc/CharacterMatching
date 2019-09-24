@@ -4,6 +4,8 @@
 #include <QMainWindow>
 #include <QTextCodec>
 #include <QDebug>
+#include "sortfilterproxymodel.h"
+#include "tablemodel.h"
 
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -49,6 +51,91 @@ MainWindow::MainWindow(QWidget *parent) :
     connect( this, SIGNAL(letterFind(QString)), this, SLOT(onTextChanged(QString)) );
 
     qDebug() << "master master master" << endl;
+
+
+
+
+    //! 排序功能添加
+    QStringList strList;
+    strList.append(QString::fromLocal8Bit("天津.卫昆一线"));
+    strList.append(QString::fromLocal8Bit("天津.大沽/1#变压器"));
+    strList.append(QString::fromLocal8Bit("天津.大沽/2#变压器"));
+    strList.append(QString::fromLocal8Bit("天津.春华路/1#变压器"));
+    strList.append(QString::fromLocal8Bit("天津.迎丰/1#变压器"));
+    strList.append(QString::fromLocal8Bit("天津.华苑/1#变压器"));
+    strList.append(QString::fromLocal8Bit("天津.大孟庄/1#变压器"));
+    strList.append(QString::fromLocal8Bit("天津.春华路/2#变压器"));
+    strList.append(QString::fromLocal8Bit("天津.昆纬路/1#变压器"));
+    strList.append(QString::fromLocal8Bit("天津.景顺路/1#变压器"));
+    strList.append(QString::fromLocal8Bit("天津.华苑/2#变压器"));
+    strList.append(QString::fromLocal8Bit("天津.大孟庄/2#变压器"));
+    strList.append(QString::fromLocal8Bit("天津.武清/1#变压器"));
+    strList.append(QString::fromLocal8Bit("天津.迎丰/3#变压器"));
+    strList.append(QString::fromLocal8Bit("天津.景顺路/2#变压器"));
+    strList.append(QString::fromLocal8Bit("天津.华苑/3#变压器"));
+    strList.append(QString::fromLocal8Bit("天津.武清/2#变压器"));
+
+
+    //    qDebug() << "Before:\n" << strList << endl;
+    //    qSort(strList.begin(), strList.end());
+    //    qDebug() << "After:\n" << strList << endl;
+
+
+
+
+
+    TableModel *pModel = new TableModel(this);
+    SortFilterProxyModel *pProxyModel = new SortFilterProxyModel(this);
+    // 设置数据源模型
+    pProxyModel->setSourceModel(pModel);
+    ui->tableView->setModel(pProxyModel);
+    // 设置可排序
+    ui->tableView->setSortingEnabled(true);
+    // 设置按照文件名升序排列
+    ui->tableView->sortByColumn(FILE_NAME_COLUMN, Qt::AscendingOrder);
+
+    // 构造数据，更新界面
+    QList<FileRecord> recordList;
+
+    // 获取随机值
+    QTime time = QTime::currentTime();
+    qsrand(time.msec() + time.second()*1000);
+
+    for (int i = 0; i < 5; ++i)
+    {
+        int nIndex = qrand()%20 + 1;
+        int nHour = qrand()%24;
+        int nMinute = qrand()%60;
+        int nSecond = qrand()%60;
+        int nBytes = qrand()%100000;
+
+        QDateTime dateTime(QDate(2016, 5, 1), QTime(nHour, nMinute, nSecond));
+
+        FileRecord record;
+        record.strFileName = QString("Name %1.cpp").arg(nIndex);
+        record.dateTime = dateTime;
+        record.nSize = nBytes;
+
+        recordList.append(record);
+    }
+    pModel->updateData(recordList);
+
+
+    ui->tableWidget->setColumnCount(3);
+    ui->tableWidget->setRowCount(recordList.count());
+    for(int i = 0; i < recordList.count(); i ++)
+    {
+        FileRecord record = recordList.at(i);
+        QTableWidgetItem *item0 = new QTableWidgetItem(record.strFileName);
+        QTableWidgetItem *item1 = new QTableWidgetItem(record.dateTime.toString("yyyyMMdd"));
+        QTableWidgetItem *item2 = new QTableWidgetItem(QString::number(record.nSize));
+        ui->tableWidget->setItem(i, 0, item0);
+        ui->tableWidget->setItem(i, 1, item1);
+        ui->tableWidget->setItem(i, 2, item2);
+    }
+    connect(ui->tableWidget->horizontalHeader(),SIGNAL(sectionClicked(int)),this,SLOT(record_sortbyclounm(int)));
+    SortFilterProxyModel *pProxyModel1 = new SortFilterProxyModel(this);
+//    ui->tableWidget->setItemDelegateForColumn(0, (QAbstractItemDelegate *)pProxyModel1);
 }
 
 
@@ -57,6 +144,10 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+void MainWindow::record_sortbyclounm(int col)
+{
+    ui->tableWidget->sortItems(col,Qt::AscendingOrder);
+}
 
 void MainWindow::onReturnPressed()
 

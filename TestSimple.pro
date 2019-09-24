@@ -26,10 +26,14 @@ CONFIG += c++11
 
 SOURCES += \
         main.cpp \
-        mainwindow.cpp
+        mainwindow.cpp \
+    sortfilterproxymodel.cpp \
+    tablemodel.cpp
 
 HEADERS += \
-        mainwindow.h
+        mainwindow.h \
+    sortfilterproxymodel.h \
+    tablemodel.h
 
 FORMS += \
         mainwindow.ui
