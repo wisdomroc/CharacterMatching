@@ -32,6 +32,7 @@ private slots:
  void onTextChanged(const QString &text);
  void onReturnPressed();
  void record_sortbyclounm(int col);
+ void showToolTip(const QModelIndex &index);
 
 private:
  QString firstPinyin(QString &text);

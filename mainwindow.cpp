@@ -4,8 +4,10 @@
 #include <QMainWindow>
 #include <QTextCodec>
 #include <QDebug>
+#include <QToolTip>
 #include "sortfilterproxymodel.h"
 #include "tablemodel.h"
+#include "sortdelegate.h"
 
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -93,10 +95,14 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->tableView->setSortingEnabled(true);
     // 设置按照文件名升序排列
     ui->tableView->sortByColumn(FILE_NAME_COLUMN, Qt::AscendingOrder);
+    // 设置鼠标跟随
+    ui->tableView->setMouseTracking(true);
+    connect(ui->tableView, SIGNAL(entered(QModelIndex)), this, SLOT(showToolTip(QModelIndex)));
+    // 设置代理
+//    ui->tableView->setItemDelegateForColumn(2, new SortDelegate());
 
     // 构造数据，更新界面
     QList<FileRecord> recordList;
-
     // 获取随机值
     QTime time = QTime::currentTime();
     qsrand(time.msec() + time.second()*1000);
@@ -121,6 +127,10 @@ MainWindow::MainWindow(QWidget *parent) :
     pModel->updateData(recordList);
 
 
+
+
+
+
     ui->tableWidget->setColumnCount(3);
     ui->tableWidget->setRowCount(recordList.count());
     for(int i = 0; i < recordList.count(); i ++)
@@ -134,8 +144,6 @@ MainWindow::MainWindow(QWidget *parent) :
         ui->tableWidget->setItem(i, 2, item2);
     }
     connect(ui->tableWidget->horizontalHeader(),SIGNAL(sectionClicked(int)),this,SLOT(record_sortbyclounm(int)));
-    SortFilterProxyModel *pProxyModel1 = new SortFilterProxyModel(this);
-//    ui->tableWidget->setItemDelegateForColumn(0, (QAbstractItemDelegate *)pProxyModel1);
 }
 
 
@@ -144,13 +152,22 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+void MainWindow::showToolTip(const QModelIndex &index)
+{
+    if (!index.isValid())
+        return;
+
+    int nColumn = index.column();
+    if (nColumn == FILE_SIZE_COLUMN)
+        QToolTip::showText(QCursor::pos(), index.data().toString());
+}
+
 void MainWindow::record_sortbyclounm(int col)
 {
     ui->tableWidget->sortItems(col,Qt::AscendingOrder);
 }
 
 void MainWindow::onReturnPressed()
-
 {
     QString text = ui->lineEdit->text();
     QString firstLetter = firstPinyin(text);

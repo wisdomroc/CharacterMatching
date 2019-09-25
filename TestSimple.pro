@@ -28,12 +28,14 @@ SOURCES += \
         main.cpp \
         mainwindow.cpp \
     sortfilterproxymodel.cpp \
-    tablemodel.cpp
+    tablemodel.cpp \
+    sortdelegate.cpp
 
 HEADERS += \
         mainwindow.h \
     sortfilterproxymodel.h \
-    tablemodel.h
+    tablemodel.h \
+    sortdelegate.h
 
 FORMS += \
         mainwindow.ui

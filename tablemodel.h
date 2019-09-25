@@ -8,6 +8,7 @@
 #define FILE_NAME_COLUMN 0   // 文件名
 #define DATE_TIME_COLUMN 1   // 修改日期
 #define FILE_SIZE_COLUMN 2   // 文件大小
+#define FILE_SIZE_HIDDEN_COLUMN 3   // 文件大小隐藏列，显示为字节
 
 typedef struct FileRecord
 {

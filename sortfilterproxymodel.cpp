@@ -56,6 +56,33 @@ bool SortFilterProxyModel::lessThan(const QModelIndex &source_left, const QModel
             }
         }
     }
+    //! 这里是加了辅助排序列以后的代码
+    if ((source_left.column() == FILE_SIZE_COLUMN) && (source_right.column() == FILE_SIZE_COLUMN))
+    {
+        // 获取辅助列索引
+        QModelIndex sizeLeftIndex = sourceModel()->index(source_left.row(), FILE_SIZE_HIDDEN_COLUMN);
+        QModelIndex sizeRightIndex = sourceModel()->index(source_right.row(), FILE_SIZE_HIDDEN_COLUMN);
+
+        QVariant leftData = sourceModel()->data(sizeLeftIndex);
+        QVariant rightData = sourceModel()->data(sizeRightIndex);
+
+        if (leftData.canConvert<qint64>() && rightData.canConvert<qint64>())
+        {
+            return leftData.toLongLong() < rightData.toLongLong();
+        }
+    }
+    //! 如果没有辅助排序列，则用一下代码
+    if ((source_left.column() == FILE_SIZE_COLUMN) && (source_right.column() == FILE_SIZE_COLUMN))
+    {
+        // 这里我们所取得数据是用户源数据
+        QVariant leftData = sourceModel()->data(source_left, Qt::UserRole);
+        QVariant rightData = sourceModel()->data(source_right, Qt::UserRole);
+
+        if (leftData.canConvert<qint64>() && rightData.canConvert<qint64>())
+        {
+            return leftData.toLongLong() < rightData.toLongLong();
+        }
+    }
 
     return QSortFilterProxyModel::lessThan(source_left, source_right);
 }
