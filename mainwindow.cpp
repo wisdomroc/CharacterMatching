@@ -5,6 +5,7 @@
 #include <QTextCodec>
 #include <QDebug>
 #include <QToolTip>
+#include <QTableView>
 #include "sortfilterproxymodel.h"
 #include "tablemodel.h"
 #include "sortdelegate.h"
@@ -98,6 +99,9 @@ MainWindow::MainWindow(QWidget *parent) :
     // 设置鼠标跟随
     ui->tableView->setMouseTracking(true);
     connect(ui->tableView, SIGNAL(entered(QModelIndex)), this, SLOT(showToolTip(QModelIndex)));
+    connect(ui->tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(slot_doubleClicked(QModelIndex)));
+    ui->tableView->horizontalHeader()->setHighlightSections(false);
+    ui->tableView->verticalHeader()->setHighlightSections(false);
     // 设置代理
 //    ui->tableView->setItemDelegateForColumn(2, new SortDelegate());
 
@@ -121,11 +125,12 @@ MainWindow::MainWindow(QWidget *parent) :
         record.strFileName = QString("Name %1.cpp").arg(nIndex);
         record.dateTime = dateTime;
         record.nSize = nBytes;
+        record.realNum = i;
 
         recordList.append(record);
     }
     pModel->updateData(recordList);
-
+    m_record = recordList;
 
 
 
@@ -160,6 +165,16 @@ void MainWindow::showToolTip(const QModelIndex &index)
     int nColumn = index.column();
     if (nColumn == FILE_SIZE_COLUMN)
         QToolTip::showText(QCursor::pos(), index.data().toString());
+}
+
+void MainWindow::slot_doubleClicked(const QModelIndex &index)
+{
+    if(!index.isValid())
+        return;
+    SortFilterProxyModel *proxyModel = qobject_cast<SortFilterProxyModel *>(ui->tableView->model());
+    TableModel *tableModel = qobject_cast<TableModel *>(proxyModel->sourceModel());
+    QModelIndex realIndex = proxyModel->mapToSource(index);
+    tableModel->getData(realIndex);
 }
 
 void MainWindow::record_sortbyclounm(int col)

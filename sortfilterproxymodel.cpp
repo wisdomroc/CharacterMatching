@@ -86,3 +86,15 @@ bool SortFilterProxyModel::lessThan(const QModelIndex &source_left, const QModel
 
     return QSortFilterProxyModel::lessThan(source_left, source_right);
 }
+
+QVariant SortFilterProxyModel::headerData(int section, Qt::Orientation orientation, int role) const
+{
+    if(orientation == Qt::Vertical && role == Qt::DisplayRole)
+    {
+        return section + 1;
+    }
+    else
+    {
+        return QSortFilterProxyModel::headerData(section, orientation, role);
+    }
+}

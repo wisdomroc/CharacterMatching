@@ -5,6 +5,7 @@
 
 class SortDelegate : public QStyledItemDelegate
 {
+    Q_OBJECT
 public:
     SortDelegate(QObject *parent = nullptr);
 

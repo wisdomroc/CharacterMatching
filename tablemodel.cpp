@@ -35,7 +35,7 @@ int TableModel::columnCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
 
-    return 4;
+    return 5;
 }
 
 // 设置表格项数据
@@ -63,6 +63,10 @@ bool TableModel::setData(const QModelIndex &index, const QVariant &value, int ro
         {
             record.nSize = value.toLongLong();
         }
+        else if(nColumn == 4)
+        {
+            record.realNum = value.toInt();
+        }
 
         m_recordList.replace(index.row(), record);
         emit dataChanged(index, index);
@@ -74,6 +78,7 @@ bool TableModel::setData(const QModelIndex &index, const QVariant &value, int ro
             QModelIndex sizeIndex = this->index(index.row(), nSizeColumn);
             emit dataChanged(sizeIndex, sizeIndex);
         }
+
         return true;
     }
     default:
@@ -136,6 +141,7 @@ QVariant TableModel::data(const QModelIndex &index, int role) const
             return record.nSize;
         }
 
+
         return "";
     }
     case Qt::UserRole:
@@ -143,6 +149,10 @@ QVariant TableModel::data(const QModelIndex &index, int role) const
         // 新增代码
         if (nColumn == FILE_SIZE_COLUMN)
             return record.nSize;
+                else if(nColumn == 4)
+                {
+                    return record.realNum;
+                }
     }
     default:
         return QVariant();
@@ -171,6 +181,10 @@ QVariant TableModel::headerData(int section, Qt::Orientation orientation, int ro
             if (section == FILE_SIZE_COLUMN)
                 return QStringLiteral("大小");
         }
+//        if(orientation == Qt::Vertical)
+//        {
+//            return section + 1;
+//        }
     }
     case Qt::UserRole:
     {
@@ -178,6 +192,15 @@ QVariant TableModel::headerData(int section, Qt::Orientation orientation, int ro
         {
             if (section == 3)
                 return QStringLiteral("大小（字节）");
+            if(section == 4)
+            {
+                return QStringLiteral("Test");
+            }
+        }
+        if(orientation == Qt::Vertical)
+        {
+            QModelIndex index = createIndex(section, 4);
+            return data(index, Qt::DisplayRole);
         }
     }
     default:
@@ -196,4 +219,11 @@ Qt::ItemFlags TableModel::flags(const QModelIndex &index) const
     Qt::ItemFlags flags = Qt::ItemIsEnabled | Qt::ItemIsSelectable;
 
     return flags;
+}
+
+QString TableModel::getData(const QModelIndex &index) const
+{
+    QVariant ret = data(index, Qt::DisplayRole);
+    QString retStr = ret.toString();
+    return retStr;
 }

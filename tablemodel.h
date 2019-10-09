@@ -15,11 +15,13 @@ typedef struct FileRecord
     QString strFileName; // 文件名
     QDateTime dateTime;  // 修改日期
     qint64 nSize;        // 文件大小
+    int realNum;
 } fileRecord;
 
 
 class TableModel : public QAbstractTableModel
 {
+    Q_OBJECT
 public:
     TableModel(QObject *parent);
     ~TableModel();
@@ -31,7 +33,7 @@ public:
     QVariant data(const QModelIndex &index, int role) const;
     QVariant headerData(int section, Qt::Orientation orientation, int role) const;
     Qt::ItemFlags flags(const QModelIndex &index) const;
-
+    QString getData(const QModelIndex &index) const;
 private:
     QList<FileRecord> m_recordList;
 };
